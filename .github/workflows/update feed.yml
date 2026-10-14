@@ -1,0 +1,44 @@
+name: Update fantasy feed
+
+on:
+  schedule:
+    - cron: "15 7 * * *"    # 10:15 Rīgā - pēc nakts spēlēm
+    - cron: "15 16 * * *"   # 19:15 Rīgā - kalendāra izmaiņas pirms vakara spēlēm
+  workflow_dispatch:         # palaišana ar roku vai no cron-job.org
+
+permissions:
+  contents: write
+
+concurrency:
+  group: feed
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install
+        run: pip install -r requirements.txt
+
+      - name: Build CSV feed
+        run: python fantasy_feed.py
+
+      - name: Commit changes
+        if: always()
+        run: |
+          git config user.name "feed-bot"
+          git config user.email "feed-bot@users.noreply.github.com"
+          git add docs
+          if git diff --cached --quiet; then
+            echo "Nav izmaiņu"
+          else
+            git commit -m "Feed update $(date -u +'%Y-%m-%d %H:%M') UTC"
+            git push
+          fi
