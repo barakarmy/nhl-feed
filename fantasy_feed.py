@@ -136,7 +136,9 @@ def build_skaters(season_id, today):
             row.update({
                 p + "gp": ws.get("gamesPlayed", 0), p + "g": ws.get("goals", 0),
                 p + "a": ws.get("assists", 0), p + "pts": ws.get("points", 0),
-                p + "pm": ws.get("plusMinus", 0), p + "ppp": ws.get("ppPoints", 0),
+                p + "pm": ws.get("plusMinus", 0), p + "pim": ws.get("penaltyMinutes", 0),
+                p + "ppp": ws.get("ppPoints", 0), p + "shp": ws.get("shPoints", 0),
+                p + "gwg": ws.get("gameWinningGoals", 0),
                 p + "sog": ws.get("shots", 0), p + "hit": wr.get("hits", 0),
                 p + "blk": wr.get("blockedShots", 0),
                 p + "toi_min": num((ws.get("timeOnIcePerGame") or 0) / 60, 2),
@@ -162,9 +164,11 @@ def build_goalies(season_id, today):
             "ga": s.get("goalsAgainst"), "gaa": num(s.get("goalsAgainstAverage"), 2),
             "sv": s.get("saves"), "sa": s.get("shotsAgainst"),
             "sv_pct": num(s.get("savePct"), 3), "so": s.get("shutouts"),
-            p + "gs": w.get("gamesStarted", 0), p + "w": w.get("wins", 0),
+            p + "gp": w.get("gamesPlayed", 0), p + "gs": w.get("gamesStarted", 0),
+            p + "w": w.get("wins", 0), p + "l": w.get("losses", 0), p + "otl": w.get("otLosses", 0),
+            p + "ga": w.get("goalsAgainst", 0), p + "sv": w.get("saves", 0),
+            p + "sa": w.get("shotsAgainst", 0), p + "so": w.get("shutouts", 0),
             p + "gaa": num(w.get("goalsAgainstAverage"), 2), p + "sv_pct": num(w.get("savePct"), 3),
-            p + "so": w.get("shutouts", 0),
         })
     out.sort(key=lambda r: (-(r["w"] or 0), r["name"] or ""))
     return out
